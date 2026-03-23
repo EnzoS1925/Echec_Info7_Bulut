@@ -7,10 +7,23 @@ using namespace std;
 
 int main() {
     PIECE board[SIZE][SIZE];    
+    int coup_jouer =0;
+    int x,y;
+    int pts_blanc=0;
+    int pts_noir=0;
     init_board(board);
     start(board);
     print_board_FEN(board);
-    move_piece(board,1,1);
-    print_board_FEN(board);
+
+    while (coup_jouer <4){
+        cout << "Quel pièce voulez-vous déplacer ? (ligne et colonne)";
+        cin >> x >> y;
+        move_piece(board,x,y,&pts_noir,&pts_blanc);
+        print_board_FEN(board);  
+        coup_jouer++;
+        cout << "Le nombre de coup déja jouer est : " << coup_jouer << endl;
+        cout << "Points Noir : "  << pts_noir << "\t Points Blanc : " << pts_blanc << endl;
+    }
+    
     return 0;
 }

@@ -61,7 +61,7 @@ void start(PIECE tab[SIZE][SIZE]){
 }
 
 
-void move_piece(PIECE tab[SIZE][SIZE], int x, int y) {
+void move_piece(PIECE tab[SIZE][SIZE], int x, int y,int* point_noir,int* point_blanc) {
     PIECE p = get_square(x, y, tab);
     int direction = 0;
     if (p >= ROI_N && p <= PION_N) {
@@ -81,8 +81,19 @@ void move_piece(PIECE tab[SIZE][SIZE], int x, int y) {
             set_square(x, y, tab, VIDE);
             set_square(new_x, y, tab, p);
         }
+        if (get_square(new_x,y,tab)!= VIDE){
+            set_square(new_x, y, tab, VIDE);
+            set_square(new_x, y, tab, p);
+            set_square(x,y,tab,VIDE);
+            if (direction == 1){
+                (*point_noir)++;
+            }if (direction == -1){
+                (*point_blanc)++;
+            }
+        }
+
+        }
     }
-}
 
 void write_FEN(PIECE tab[SIZE][SIZE]){
     for (int i = 0; i < SIZE; i++) {
