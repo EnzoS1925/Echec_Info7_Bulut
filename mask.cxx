@@ -38,6 +38,8 @@ void highlight_possible_moves(int x, int y, Plateau tab, Masque m) {
         case TOUR_N: case TOUR_B:
             highlight_possible_moves_rook(x, y, tab, m);
             break;
+        case PION_N: case PION_B:
+            highlight_possible_moves_pawn(x,y,tab,m);
     }
 }
 
@@ -46,15 +48,6 @@ void highlight_possible_moves_rook(int x, int y, Plateau tab, Masque m) {
     for (int i=0;i<SIZE;i++){
         if (get_square(x,y,tab) >= ROI_N && get_square(x,y,tab) <= PION_N ) color = 2;
         if (get_square(x,y,tab) >= ROI_B && get_square(x,y,tab) <= PION_B ) color = 1;
-
-    }
-    for (int i=0;i<SIZE;i++){
-        if (i!=x){
-            m[i][y] =MASK_MOVE;
-        } 
-        if (i!=y){
-            m[x][i] = MASK_MOVE; 
-        } 
     }
     int target_color;
     // On vérifie les couleurs sur la ligne
@@ -64,11 +57,11 @@ void highlight_possible_moves_rook(int x, int y, Plateau tab, Masque m) {
         if (p >= ROI_N && p <= PION_N) target_color = 2;
         else if (p >= ROI_B && p <= PION_B) target_color = 1;
         else target_color = 0;
-
         if (target_color == 0) {
             m[x][j] = MASK_MOVE;
         } else if (target_color != color) {
             m[x][j] = MASK_CAPTURE;
+            break;
         } else {
             m[x][j] = MASK_VIDE;
         }
@@ -82,10 +75,13 @@ void highlight_possible_moves_rook(int x, int y, Plateau tab, Masque m) {
         else target_color = 0;
         if (target_color == 0) {
             m[i][y] = MASK_MOVE;
+            break;
         } else if (target_color != color) {
             m[i][y] = MASK_CAPTURE;
+            break;
         } else {
             m[i][y] = MASK_VIDE;
+            break;
         }
     }
 }
@@ -97,7 +93,77 @@ void highlight_possible_moves_king(int x, int y, Plateau tab, Masque m) {
                 if (!(i == x && j == y)) {
                     m[i][j] = MASK_MOVE;
                 }
+                if (get_square(i,j,tab) != VIDE){
+                    m[i][j] = MASK_VIDE;
+                }
+                if (get_square(x,y,tab) >= ROI_N && get_square(x,y,tab) <= PION_N){ // LE ROI EST NOIR.
+                    if (get_square(i,j,tab) >= ROI_B  && get_square(i,j,tab) <= PION_B){  // ON VERIF SI LES PIONS AUTOUR SONT BLANC
+                        m[i][j] = MASK_CAPTURE; // SI BLANC ALORS ON PEUX ATTAQUER
+                    }
+                }
+                if (get_square(x,y,tab) >= ROI_B && get_square(x,y,tab) <= PION_B){ // LE ROI EST BLANC.
+                    if (get_square(i,j,tab) >= ROI_N  && get_square(i,j,tab) <= PION_N){  // ON VERIF SI LES PIONS AUTOUR SONT NOIR
+                        m[i][j] = MASK_CAPTURE; // SI NOIR ALORS ON PEUX ATTAQUER
+                    }
+                }
             }
+        }
+    }
+}
+
+void highlight_possible_moves_pawn(int x,int y,Plateau tab,Masque m){
+    int color;
+    if (get_square(x,y,tab) >= ROI_N && get_square(x,y,tab) <= PION_N ) color = 2;
+    if (get_square(x,y,tab) >= ROI_B && get_square(x,y,tab) <= PION_B ) color = 1;
+
+    if (color == 2 && x == 1){
+        m[x+1][y] = MASK_MOVE;
+        m[x+2][y] = MASK_MOVE;
+    }
+    if (color == 1 && x == 6){
+        m[x-1][y] = MASK_MOVE;
+        m[x-2][y] =MASK_MOVE;
+    }
+    if (color == 1){
+        m[x-1][y] =MASK_MOVE;
+    }else{
+        m[x+1][y] =MASK_MOVE;
+    }
+
+    int target_color;
+    if (color == 2){ // EST NOIR
+        if (get_square(x+1,y+1,tab) >= ROI_N && get_square(x+1,y+1,tab) <= PION_N ) target_color = 2;
+        if (get_square(x+1,y+1,tab) >= ROI_B && get_square(x+1,y+1,tab) <= PION_B ) target_color = 1;
+        if (get_square(x+1,y+1,tab) == VIDE) target_color =0;
+        if (target_color ==1){
+            m[x+1][y+1] = MASK_CAPTURE;
+        }else{
+            m[x+1][y+1] = MASK_VIDE;
+        }
+        if (get_square(x+1,y-1,tab) >= ROI_N && get_square(x+1,y-1,tab) <= PION_N ) target_color = 2;
+        if (get_square(x+1,y-1,tab) >= ROI_B && get_square(x+1,y-1,tab) <= PION_B ) target_color = 1;
+        if (target_color == 1){
+            m[x+1][y-1] = MASK_CAPTURE;
+        }else{
+            m[x+1][y-1] = MASK_VIDE;
+        }
+    }
+
+    if (color == 1){ // EST BLANC
+        if (get_square(x-1,y+1,tab) >= ROI_N && get_square(x-1,y+1,tab) <= PION_N ) target_color = 2;
+        if (get_square(x-1,y+1,tab) >= ROI_B && get_square(x-1,y+1,tab) <= PION_B ) target_color = 1;
+        if (get_square(x-1,y+1,tab) == VIDE) target_color =0;
+        if (target_color ==2){
+            m[x-1][y+1] = MASK_CAPTURE;
+        }else{
+            m[x-1][y+1] = MASK_VIDE;
+        }
+        if (get_square(x-1,y-1,tab) >= ROI_N && get_square(x-1,y-1,tab) <= PION_N ) target_color = 2;
+        if (get_square(x-1,y-1,tab) >= ROI_B && get_square(x-1,y-1,tab) <= PION_B ) target_color = 1;
+        if (target_color == 2){
+            m[x-1][y-1] = MASK_CAPTURE;
+        }else{
+            m[x-1][y-1] = MASK_VIDE;
         }
     }
 }

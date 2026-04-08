@@ -20,7 +20,7 @@ int main() {
     while (pts_blanc != 15 or pts_noir != 15){
         cout << "Quel pièce voulez-vous déplacer ? (ligne et colonne)";
         cin >> x >> y;
-        highlight_possible_moves_king(x,y,board,m);
+        highlight_possible_moves(x,y,board,m);
         print_board_with_mask(board,m);
         move_piece(board,x,y,&pts_noir,&pts_blanc); 
         print_board_FEN(board);
