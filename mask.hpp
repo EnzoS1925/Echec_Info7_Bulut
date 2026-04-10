@@ -28,4 +28,10 @@ void highlight_movables_pieces(int Player,Plateau tab,Masque m);
 
 void highlight_attacked_pieces(int Player, Plateau tab, Masque m);
 
+void highlight_take_pieces(int Player, Plateau tab, Masque m);
+
+void mask_choices_menu(int Player,Plateau tab,Masque m);
+
+void mask_choices(int Player,Plateau tab,Masque m);
+
 #endif

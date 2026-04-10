@@ -1,5 +1,6 @@
 #include "mask.hpp"
 #include "board.hpp"
+#include "view.hpp"
 #include <iostream>
 using namespace std;
 
@@ -376,6 +377,156 @@ void highlight_movables_pieces(int Player, Plateau tab, Masque m) {
 }
 
 void highlight_attacked_pieces(int Player, Plateau tab, Masque m){
+    clear_mask(m);
+    int color;
+    if (Player==0){
+        color = 1;
+    }else if (Player == 1){
+        color=2;
+    }
+    Masque attack_mask;
+    empty_mask(attack_mask);
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            PIECE p = get_square(i, j, tab);
+            bool is_player_piece = (color == 2 && p >= ROI_N && p <= PION_N)
+                                || (color == 1 && p >= ROI_B && p <= PION_B);
+            if (!is_player_piece) continue;
+            empty_mask(attack_mask);
+            highlight_possible_moves(i, j, tab, attack_mask);
+            bool can_attack = false;
+            for (int i = 0; i < SIZE && !can_attack; i++) {
+                for (int j = 0; j < SIZE && !can_attack; j++) {
+                    if (attack_mask[i][j] == MASK_CAPTURE) {
+                        can_attack = true;
+                    }
+                }
+            }
+            if (can_attack) {
+                m[i][j] = MASK_CAPTURE;
+            }
+        }
+    }
+}
+
+void highlight_take_pieces(int Player, Plateau tab, Masque m){
+        clear_mask(m);
+    int color;
+    if (Player==0){
+        color = 2;
+    }else if (Player == 1){
+        color=1;
+    }
+    Masque being_attacked_mask;
+    empty_mask(being_attacked_mask);
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            PIECE p = get_square(i, j, tab);
+            bool is_player_piece = (color == 2 && p >= ROI_N && p <= PION_N)
+                                || (color == 1 && p >= ROI_B && p <= PION_B);
+            if (!is_player_piece) continue;
+            empty_mask(being_attacked_mask);
+            highlight_possible_moves(i, j, tab, being_attacked_mask);
+            bool can_attack = false;
+            for (int i = 0; i < SIZE && !can_attack; i++) {
+                for (int j = 0; j < SIZE && !can_attack; j++) {
+                    if (being_attacked_mask[i][j] == MASK_CAPTURE) {
+                        can_attack = true;
+                    }
+                }
+            }
+            if (can_attack) {
+                m[i][j] = MASK_CAPTURE;
+            }
+        }
+    }
+}
+
+void mask_choices_menu(int Player,Plateau tab,Masque m){
+        cout << "=====================================";
+        int choix;
+        cout << endl << "Pour voir les possibilités taper 1 " << endl;
+        cout << "Pour déplacer les pièces sans regarder les possibilités taper 2 :";
+        cin >> choix;
+        if (choix == 1){
+            cout << "=====================================" << endl;
+            cout << "Menu des possibilités : "  << endl;
+            int choix_masques;
+            cout << "\t {1} : Pièces qui peuvent bouger" << endl << "\t {2} : Pièces qui peuvent attaquer" << endl << "\t {3} : Pièces qui peuvent se faire attaquer"<< endl
+            << "\t {4} : Retour"<< endl;
+            cin >> choix_masques;
+            if (choix_masques == 1){
+                highlight_movables_pieces(0,tab,m);
+                print_board_with_mask(tab,m);
+            }else if (choix_masques == 2){
+                highlight_attacked_pieces(0,tab,m);
+                print_board_with_mask(tab,m);
+            }else if(choix_masques == 3){
+                highlight_take_pieces(0,tab,m);
+                print_board_with_mask(tab,m);
+            }else if (choix_masques == 4){
+                print_board_with_mask(tab,m);
+            }
+        }
+        if (choix == 2){
+            return;
+        }
+}
+
+void mask_choices(int Player,Plateau tab,Masque m){
+    cout << "=====================================" << endl;
+    int choix;
+    cout << "{1} : Voir les possibilités." << endl << "{2} : Faire la combinaison de plusieurs de possibilités." << endl <<"{3} : Deplacer simplement les pièces : ";
+    cin >> choix;
+    if (choix == 1){
+        cout << "=====================================" << endl;
+        cout << "Menu des possibilités : "  << endl;
+        int choix_masques;
+        cout << "\t {1} : Pièces qui peuvent bouger" << endl << "\t {2} : Pièces qui peuvent attaquer" << endl << "\t {3} : Pièces qui peuvent se faire attaquer"<< endl
+        << "\t {4} : Retour"<< endl;
+        cin >> choix_masques;
+        if (choix_masques == 1){
+            highlight_movables_pieces(0,tab,m);
+            print_board_with_mask(tab,m);
+        }else if (choix_masques == 2){
+            highlight_attacked_pieces(0,tab,m);
+            print_board_with_mask(tab,m);
+        }else if(choix_masques == 3){
+            highlight_take_pieces(0,tab,m);
+            print_board_with_mask(tab,m);
+        }else if (choix_masques == 4){
+            print_board_with_mask(tab,m);
+        }
+    }else if (choix == 2){
+        cout << "=====================================" << endl;
+        cout << "Menu des possibilités : " << endl;
+        int choix_masques;
+        cout << "\t {1} : Pièces qui peuvent attaquer et se déplacer." << endl << "\t {2} : Pièces pouvant se deplacer et être attaqué.";
+        cout << endl << "\t {3} : Pièces pouvant attaquer et être attaqué" << endl << "\t {4} : Retour : ";
+        cin >> choix_masques;
+        if (choix_masques == 1){
+            highlight_movables_pieces(0,tab,m);
+            highlight_attacked_pieces(0,tab,m);
+            print_board_with_mask(tab,m);
+            clear_mask(m);
+        }else if (choix_masques == 2){
+            highlight_movables_pieces(0,tab,m);
+            highlight_take_pieces(0,tab,m);
+            print_board_with_mask(tab,m);
+            clear_mask(m);
+        }else if(choix_masques == 3){
+            highlight_take_pieces(0,tab,m);
+            highlight_attacked_pieces(0,tab,m);
+            print_board_with_mask(tab,m);
+            clear_mask(m);
+        }else if (choix_masques == 4){
+            print_board_with_mask(tab,m);
+            clear_mask(m);
+        }
+    }else if(choix == 3){
+        print_board_with_mask(tab,m);
+        clear_mask(m);
+    }
 
 }
 

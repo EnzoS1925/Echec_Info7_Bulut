@@ -25,9 +25,25 @@ int main() {
     clear_mask(m);
     */
 
+    /*TEST DES PIECES QUI PEUVENT ATTAQUER
+    set_square(2,3,board,PION_B);
+    highlight_attacked_pieces(0,board,m);
+    print_board_with_mask(board,m);
+    clear_mask(m); */
+
+    /*TEST DES PIECES QUI VONT SE FAIRE ATTAQUER
+    set_square(2,3,board,PION_B);
+    highlight_take_pieces(0,board,m);
+    print_board_with_mask(board,m);
+    clear_mask(m);
+*/
+
+
     while (pts_blanc != 15 && pts_noir != 15){
+        mask_choices(0,board,m);
         cout << "Quel pièce voulez-vous déplacer ? (ligne et colonne)";
         cin >> x >> y;
+        clear_mask(m);
         highlight_possible_moves(x,y,board,m);
         print_board_with_mask(board,m);
         move_piece(board,x,y,&pts_noir,&pts_blanc); 
