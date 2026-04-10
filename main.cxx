@@ -15,14 +15,17 @@ int main() {
     int pts_noir=0;
     init_board(board);
     start(board);
-    empty_mask(m);
-
-    //TEST POUR LE FOU :
-    set_square(4,4,board,REINE_B);
-
-    // FIN TEST FOU 
+    empty_mask(m); 
     print_board_FEN(board);
-    while (pts_blanc != 15 or pts_noir != 15){
+
+
+    /* TEST DES PIECES QUI PEUVENT BOUGER.
+    highlight_movables_pieces(1,board,m);
+    print_board_with_mask(board,m);
+    clear_mask(m);
+    */
+
+    while (pts_blanc != 15 && pts_noir != 15){
         cout << "Quel pièce voulez-vous déplacer ? (ligne et colonne)";
         cin >> x >> y;
         highlight_possible_moves(x,y,board,m);

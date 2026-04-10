@@ -20,7 +20,12 @@ void highlight_possible_moves_bishop(int x,int y,Plateau tab,Masque m);
 
 void highlight_possible_moves_queen(int x,int y,Plateau tab,Masque m);
 
+void highlight_possible_moves_knight(int x,int y,Plateau tab,Masque m);
+
 void highlight_possible_moves_pawn(int x,int y,Plateau tab,Masque m);
 
+void highlight_movables_pieces(int Player,Plateau tab,Masque m);
+
+void highlight_attacked_pieces(int Player, Plateau tab, Masque m);
 
 #endif
