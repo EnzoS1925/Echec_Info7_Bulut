@@ -18,7 +18,7 @@ int main() {
     empty_mask(m);
 
     //TEST POUR LE FOU :
-    set_square(4,4,board,FOU_B);
+    set_square(4,4,board,REINE_B);
 
     // FIN TEST FOU 
     print_board_FEN(board);
